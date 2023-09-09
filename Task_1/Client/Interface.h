@@ -15,10 +15,10 @@ public:
     explicit Interface(QWidget *parent = nullptr);
     ~Interface();
 public slots:
-    void slotClear();
+    void slotUpdate();
     void slotBindPort();
     void slotDisconnectedHost();
-    void slotSend();
+    void slotArrivalDatagram();
 private:
     Ui::Interface *ui;
 
