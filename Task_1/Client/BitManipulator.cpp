@@ -8,118 +8,80 @@ void BM::BitManipulator::insertPacket(Packet _packet) {
     packet = _packet;
 }
 
-void BM::BitManipulator::numsToBitsFirstWord(int x, int y) {
-    if ((x >= 0 && x <= 63) && (y >= -32 && y <= 31)) {
-        std::bitset<16> xBit = x & 0b0000000000111111;
-        std::bitset<16> yBit = (y << 8) & 0b0011111100000000;
-
-        packet.words[0] = yBit | xBit;
-    }
-    else {
-        throw std::runtime_error("numsToBitsFirstWord");
-    }
+void BM::BitManipulator::setFirstWord(int x, int y) {
+    packet.firstWord.x = x;
+    packet.firstWord.y = y;
 }
 
-void BM::BitManipulator::numsToBitsSecondWord(int v, int m, int s) {
-    if ((v >= 0 && v <= 255) && (m >= 0 && m <= 3) && (s >= 0 && s <= 3)) {
-        std::bitset<16> vBit = v & 0b0000000011111111;
-        std::bitset<16> mBit = (m << 8) & 0b0000001100000000;
-        std::bitset<16> sBit = (s << 12) & 0b0011000000000000;
-
-        packet.words[1] = sBit | mBit | vBit;
-    }
-    else {
-        throw std::runtime_error("numsToBitsSecondWord");
-    }
+void BM::BitManipulator::getFirstWord(int& x, int& y) {
+    x = packet.firstWord.x;
+    y = packet.firstWord.y;
 }
 
-void BM::BitManipulator::numsToBitsThirdWord(float a, int p) {
-    if ((a >= -12.8f && a <= 12.7f) && (p >= 0 && p <= 130)) {      // -12.7 until 12.8 by the task
-        int8_t intNumA = static_cast<int8_t>(a * 10.0f); // static_cast<int>(a * 10.0f - 1.0f);
-
-        std::bitset<16> aBit = intNumA & 0b0000000011111111;
-        std::bitset<16> pBit = (p << 8) & 0b1111111100000000;
-
-        packet.words[2] = pBit | aBit;
-    }
-    else {
-        throw std::runtime_error("numsToBitsThirdWord");
-    }
+void BM::BitManipulator::setSecondWord(int v, int m, int s) {
+    packet.secondWord.v = v;
+    packet.secondWord.m = m;
+    packet.secondWord.s = s;
 }
 
-void BM::BitManipulator::numsToBitsFourthWord(int r) {
-    if (r >= 0 && r <= 0b1111111111111111) {
-        packet.words[3] = r;
-    }
-    else {
-        throw std::runtime_error("numsToBitsFourthWord");
-    }
+void BM::BitManipulator::setThirdWord(float a, int p) {
+    packet.thirdWord.a = static_cast<int>(a * 10.0f);
+    packet.thirdWord.p = p;
 }
 
-void BM::BitManipulator::bitsToNumsFirstWord(int& x, int& y) {
-    std::bitset<INT_BIT_SIZE> xBit;
-    std::bitset<INT_BIT_SIZE> yBit;
+void BM::BitManipulator::setFourthWord(int r) {
+    packet.fourthWord.r1 = (r >> 0) & 1;
+    packet.fourthWord.r2 = (r >> 1) & 1;
+    packet.fourthWord.r3 = (r >> 2) & 1;
+    packet.fourthWord.r4 = (r >> 3) & 1;
 
-    if (packet.words[0][13] == 1) yBit.set();
+    packet.fourthWord.r5 = (r >> 4) & 1;
+    packet.fourthWord.r6 = (r >> 5) & 1;
+    packet.fourthWord.r7 = (r >> 6) & 1;
+    packet.fourthWord.r8 = (r >> 7) & 1;
 
-    for (size_t i = 0, j = 0; i <= 5; ++i, ++j) {
-        xBit[j] = packet.words[0][i];
-    }
+    packet.fourthWord.r9 = (r >> 8) & 1;
+    packet.fourthWord.r10 = (r >> 9) & 1;
+    packet.fourthWord.r11 = (r >> 10) & 1;
+    packet.fourthWord.r12 = (r >> 11) & 1;
 
-    for (size_t i = 8, j = 0; i <= 13; ++i, ++j) {
-        yBit[j] = packet.words[0][i];
-    }
-
-    x = static_cast<int>(std::stoll(xBit.to_string(), 0, 2));
-    y = static_cast<int>(std::stoll(yBit.to_string(), 0, 2));
+    packet.fourthWord.r13 = (r >> 12) & 1;
+    packet.fourthWord.r14 = (r >> 13) & 1;
+    packet.fourthWord.r15 = (r >> 14) & 1;
+    packet.fourthWord.r16 = (r >> 15) & 1;
 }
 
-void BM::BitManipulator::bitsToNumsSecondWord(int& v, int& m, int& s) {
-    std::bitset<INT_BIT_SIZE> vBit;
-    std::bitset<INT_BIT_SIZE> mBit;
-    std::bitset<INT_BIT_SIZE> sBit;
-
-    for (size_t i = 0, j = 0; i <= 7; ++i, ++j) {
-        vBit[j] = packet.words[1][i];
-    }
-
-    for (size_t i = 8, j = 0; i <= 9; ++i, ++j) {
-        mBit[j] = packet.words[1][i];
-    }
-
-    for (size_t i = 12, j = 0; i <= 13; ++i, ++j) {
-        sBit[j] = packet.words[1][i];
-    }
-
-    v = static_cast<int>(std::stoll(vBit.to_string(), 0, 2));
-    m = static_cast<int>(std::stoll(mBit.to_string(), 0, 2));
-    s = static_cast<int>(std::stoll(sBit.to_string(), 0, 2));
+void BM::BitManipulator::getSecondWord(int& v, int& m, int& s) {
+    v = packet.secondWord.v;
+    m = packet.secondWord.m;
+    s = packet.secondWord.s;
 }
 
-void BM::BitManipulator::bitsToNumsThirdWord(float& a, int& p) {
-    std::bitset<INT_BIT_SIZE> aBit;
-    std::bitset<INT_BIT_SIZE> pBit;
-
-    if (packet.words[2][7] == 1) aBit.set();
-
-    for (size_t i = 0, j = 0; i <= 7; ++i, ++j) {
-        aBit[j] = packet.words[2][i];
-    }
-
-    for (size_t i = 8, j = 0; i <= 15; ++i, ++j) {
-        pBit[j] = packet.words[2][i];
-    }
-
-    a = static_cast<int>(std::stoll(aBit.to_string(), 0, 2)) / 10.0f;
-    p = static_cast<int>(std::stoll(pBit.to_string(), 0, 2));
+void BM::BitManipulator::getThirdWord(float& a, int& p) {
+    a = static_cast<float>(packet.thirdWord.a / 10.0f);
+    p = packet.thirdWord.p;
 }
 
-void BM::BitManipulator::bitsToNumsFourthWord(int& r) {
-    std::bitset<INT_BIT_SIZE> rBit;
+void BM::BitManipulator::getFourthWord(int& r) {
+    r = 0;
 
-    for (size_t i = 0, j = 0; i <= 15; ++i, ++j) {
-        rBit[j] = packet.words[3][i];
-    }
+    r |= (packet.fourthWord.r1 << 0);
+    r |= (packet.fourthWord.r2 << 1);
+    r |= (packet.fourthWord.r3 << 2);
+    r |= (packet.fourthWord.r4 << 3);
 
-    r = static_cast<int>(std::stoll(rBit.to_string(), 0, 2));
+    r |= (packet.fourthWord.r5 << 4);
+    r |= (packet.fourthWord.r6 << 5);
+    r |= (packet.fourthWord.r7 << 6);
+    r |= (packet.fourthWord.r8 << 7);
+
+    r |= (packet.fourthWord.r9 << 8);
+    r |= (packet.fourthWord.r10 << 9);
+    r |= packet.fourthWord.r11 << 10;
+    r |= packet.fourthWord.r12 << 11;
+
+    r |= packet.fourthWord.r13 << 12;
+    r |= packet.fourthWord.r14 << 13;
+    r |= packet.fourthWord.r15 << 14;
+    r |= packet.fourthWord.r16 << 15;
 }

@@ -40,7 +40,7 @@ void SM::SocketManager::slotReadPendingDatagrams() {
         datagram.resize(udpSocket->pendingDatagramSize());
         udpSocket->readDatagram(datagram.data(), datagram.size());
 
-        bool isNeedPacket = (datagram.size() == sizeof(BM::Packet)) && (reinterpret_cast<BM::Packet*>(datagram.data())->name == static_cast<char>(0xAA));
+        bool isNeedPacket = (datagram.size() == sizeof(BM::Packet));
 
         if (isNeedPacket) {
             packet = *reinterpret_cast<BM::Packet*>(datagram.data());

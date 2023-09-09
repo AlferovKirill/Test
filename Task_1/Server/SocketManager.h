@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QWidget>
-#include <QDebug>
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QThread>

@@ -34,6 +34,7 @@ Interface::Interface(QWidget *parent) : QMainWindow(parent), ui(new Ui::Interfac
     ui->rSpinBox_15->setRange(0, 1);
     ui->rSpinBox_16->setRange(0, 1);
 
+    ui->aDoubleSpinBox->setDecimals(1);
     ui->ipLineEdit->setText("127.0.0.1");
 
     bitManipulator = new BM::BitManipulator;
@@ -88,7 +89,7 @@ void Interface::slotBindPort() {
 }
 
 void Interface::slotDisconnectedHost() {
-    ui->homePortLineEdit->setText("Порт не доступен!");
+    ui->homePortLineEdit->setText("Не доступен!");
 }
 
 void Interface::slotSend() {
@@ -112,12 +113,12 @@ void Interface::slotSend() {
     r |= ui->rSpinBox_13->value() << 3;
     r |= ui->rSpinBox_14->value() << 2;
     r |= ui->rSpinBox_15->value() << 1;
-    r |= ui->rSpinBox_16->value();
+    r |= ui->rSpinBox_16->value() << 0;
 
-    bitManipulator->numsToBitsFirstWord(ui->xSpinBox->value(), ui->ySpinBox->value());
-    bitManipulator->numsToBitsSecondWord(ui->vSpinBox->value(), ui->mSpinBox->value(), ui->sSpinBox->value());
-    bitManipulator->numsToBitsThirdWord(ui->aDoubleSpinBox->value(), ui->pSpinBox->value());
-    bitManipulator->numsToBitsFourthWord(r);
+    bitManipulator->setFirstWord(ui->xSpinBox->value(), ui->ySpinBox->value());
+    bitManipulator->setSecondWord(ui->vSpinBox->value(), ui->mSpinBox->value(), ui->sSpinBox->value());
+    bitManipulator->setThirdWord(ui->aDoubleSpinBox->value(), ui->pSpinBox->value());
+    bitManipulator->setFourthWord(r);
 
     socketManager->sendDatagram(ui->ipLineEdit->text(), ui->portLineEdit->text().toInt(), bitManipulator->getPacket());
 }
