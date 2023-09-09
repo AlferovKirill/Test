@@ -15,7 +15,6 @@ public:
     explicit Interface(QWidget *parent = nullptr);
     ~Interface();
 public slots:
-    void slotUpdate();
     void slotBindPort();
     void slotDisconnectedHost();
     void slotArrivalDatagram();

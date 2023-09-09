@@ -24,8 +24,8 @@ void SM::SocketManager::setHostNPort(int _port) {
 }
 
 void SM::SocketManager::sendDatagram(const QString& destinationHost, int destinationPort, BM::Packet packet) {
-    QByteArray datagramParametrs(reinterpret_cast<char*>(&packet), sizeof(packet));
-    udpSocket->writeDatagram(datagramParametrs, QHostAddress(destinationHost), destinationPort);
+    QByteArray datagram(reinterpret_cast<char*>(&packet), sizeof(packet));
+    udpSocket->writeDatagram(datagram, QHostAddress(destinationHost), destinationPort);
     QThread::msleep(5);
 }
 
@@ -40,11 +40,10 @@ void SM::SocketManager::slotReadPendingDatagrams() {
         datagram.resize(udpSocket->pendingDatagramSize());
         udpSocket->readDatagram(datagram.data(), datagram.size());
 
-        bool isNeedPacket = (datagram.size() == sizeof(BM::Packet)) && (reinterpret_cast<BM::Packet*>(datagram.data())->name == static_cast<char>(0xAA));
+        bool isNeedPacket = (datagram.size() == sizeof(BM::Packet));
 
         if (isNeedPacket) {
             packet = *reinterpret_cast<BM::Packet*>(datagram.data());
-
             emit arrivalDatagram();
         }
     }

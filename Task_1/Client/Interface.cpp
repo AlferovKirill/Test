@@ -34,6 +34,8 @@ Interface::Interface(QWidget *parent) : QMainWindow(parent), ui(new Ui::Interfac
     ui->rSpinBox_15->setRange(0, 1);
     ui->rSpinBox_16->setRange(0, 1);
 
+    ui->aDoubleSpinBox->setDecimals(1);
+
     bitManipulator = new BM::BitManipulator;
     socketManager = new SM::SocketManager;
 
@@ -49,43 +51,13 @@ Interface::~Interface() {
     delete socketManager;
 }
 
-void Interface::slotUpdate() {
-    ui->xSpinBox->setValue(0);
-    ui->ySpinBox->setValue(0);
-    ui->vSpinBox->setValue(0);
-    ui->mSpinBox->setValue(0);
-    ui->sSpinBox->setValue(0);
-    ui->aDoubleSpinBox->setValue(0);
-    ui->pSpinBox->setValue(0);
-
-    ui->rSpinBox_1->setValue(0);
-    ui->rSpinBox_2->setValue(0);
-    ui->rSpinBox_3->setValue(0);
-    ui->rSpinBox_4->setValue(0);
-
-    ui->rSpinBox_5->setValue(0);
-    ui->rSpinBox_6->setValue(0);
-    ui->rSpinBox_7->setValue(0);
-    ui->rSpinBox_8->setValue(0);
-
-    ui->rSpinBox_9->setValue(0);
-    ui->rSpinBox_10->setValue(0);
-    ui->rSpinBox_11->setValue(0);
-    ui->rSpinBox_12->setValue(0);
-
-    ui->rSpinBox_13->setValue(0);
-    ui->rSpinBox_14->setValue(0);
-    ui->rSpinBox_15->setValue(0);
-    ui->rSpinBox_16->setValue(0);
-}
-
 void Interface::slotBindPort() {
     socketManager->setHostNPort(ui->homePortLineEdit->text().toInt());
     socketManager->slotBindPort();
 }
 
 void Interface::slotDisconnectedHost() {
-    ui->homePortLineEdit->setText("Порт не доступен!");
+    ui->homePortLineEdit->setText("Не доступен!");
 }
 
 void Interface::slotArrivalDatagram() {
@@ -94,10 +66,10 @@ void Interface::slotArrivalDatagram() {
     int x, y, v, m, s, p, r;
     float a;
 
-    bitManipulator->bitsToNumsFirstWord(x, y);
-    bitManipulator->bitsToNumsSecondWord(v, m, s);
-    bitManipulator->bitsToNumsThirdWord(a, p);
-    bitManipulator->bitsToNumsFourthWord(r);
+    bitManipulator->getFirstWord(x, y);
+    bitManipulator->getSecondWord(v, m, s);
+    bitManipulator->getThirdWord(a, p);
+    bitManipulator->getFourthWord(r);
 
     ui->xSpinBox->setValue(x);
     ui->ySpinBox->setValue(y);
@@ -125,5 +97,5 @@ void Interface::slotArrivalDatagram() {
     ui->rSpinBox_13->setValue(r & (1 << 3));
     ui->rSpinBox_14->setValue(r & (1 << 2));
     ui->rSpinBox_15->setValue(r & (1 << 1));
-    ui->rSpinBox_16->setValue(r & 1);
+    ui->rSpinBox_16->setValue(r & (1 << 0));
 }
