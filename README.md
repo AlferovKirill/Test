@@ -1,6 +1,6 @@
 # GOSNIIAS_Test
 
-![Server](https://github.com/AlferovKirill/GOSNIIAS_Test/assets/59083480/6cb31568-6344-4c04-b3fe-71ecce56516d)
-![Client](https://github.com/AlferovKirill/GOSNIIAS_Test/assets/59083480/96bcafde-58f0-4811-8703-c0d9d5014bbc)
+![Server](https://github.com/AlferovKirill/Test/assets/59083480/9b78c0a8-f2e4-4c77-a8bd-eecd73d36ce3)
+![Client](https://github.com/AlferovKirill/Test/assets/59083480/3c10897b-9357-4a02-83d8-a4496be048ef)
 
-https://github.com/AlferovKirill/GOSNIIAS_Test/assets/59083480/8eb6225f-96c4-48f0-abb4-87b930b9252a
+https://github.com/AlferovKirill/Test/assets/59083480/1676a3f4-3b2d-47a2-a63d-ccdbbe20ea24
