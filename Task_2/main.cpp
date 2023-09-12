@@ -24,10 +24,9 @@ int main(int argc, char** argv) {
     qDebug() << "-> " << p2.x << " " << p2.y;
     qDebug() << "-> k = " << pair.first << " b = " << pair.second;
 
-    return 0;
+    QApplication a(argc, argv);
+    Interface w;
+    w.show();
 
-    //QApplication a(argc, argv);
-    //Interface w;
-    //w.show();
-    //return a.exec();
+    return a.exec();
 }

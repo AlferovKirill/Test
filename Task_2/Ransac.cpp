@@ -16,8 +16,8 @@ Point& Point::operator/=(double num) {
     return *this;
 }
 
-Point operator-(const Point& point_1, const Point& point_2) {
-    return Point(point_1.x - point_2.x, point_1.y - point_2.y);
+Point Point::operator-(const Point& point) const {
+    return Point(x - point.x, y - point.y);
 }
 
 double norm(const Point& point) {
@@ -76,4 +76,16 @@ std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int it
     double b = line[3] - k*line[2];
 
     return std::pair<double, double>(k, b);
+}
+
+void Coordinates::push_back(const Point& point) {
+    points.push_back(point);
+}
+
+void Coordinates::push_back(Point&& point) {
+    points.push_back(std::move(point));
+}
+
+size_t Coordinates::size() const noexcept {
+    return points.size();
 }
