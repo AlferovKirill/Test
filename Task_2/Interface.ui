@@ -16,10 +16,51 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QwtPlot" name="qwtPlot">
-      <property name="autoReplot">
-       <bool>true</bool>
+     <widget class="QWidget" name="customPlot" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="searchButton">
+         <property name="minimumSize">
+          <size>
+           <width>125</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>125</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Найти линию</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -42,7 +83,6 @@
    </widget>
    <addaction name="menu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="openFile">
    <property name="text">
     <string>Открыть</string>
@@ -54,13 +94,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

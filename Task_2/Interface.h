@@ -2,9 +2,11 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QGridLayout>
 #include <QTextStream>
 #include <QFileDialog>
 #include <QStringList>
+#include <QMouseEvent>
 #include <QFile>
 
 #include <qwt/qwt_plot.h>
@@ -17,7 +19,9 @@
 #include <qwt/qwt_plot_picker.h>
 #include <qwt/qwt_picker_machine.h>
 #include <qwt/qwt_scale_engine.h>
+#include <qwt/qwt_plot_marker.h>
 
+#include "CustomPlot.h"
 #include "Ransac.h"
 
 QT_BEGIN_NAMESPACE
@@ -36,17 +40,29 @@ public slots:
     void openDataFile();
     void fileIsNotCorrect();
     void plotUpdate();
+    void fitLineRansacSlot();
+    void onPlotMousePressEvent();
 signals:
     void fileIsNotGood();
 private:
     Ui::Interface *ui;
 
     Coordinates* coordinates;
+    CustomPlot* qwtPlot;
 
+    QVBoxLayout* vBoxLayout;
     QwtPlotGrid* grid;
     QwtPlotMagnifier* magnifier;
     QwtPlotPanner* panner;
     QwtPlotPicker* picker;
+
     QwtPlotCurve* pointsCurve;
-    QwtSymbol* symbol;
+    QwtPlotCurve* answerPointsCurve;
+    QwtPlotCurve* answerCurve;
+
+    QwtSymbol* pointsSymbol;
+    QwtSymbol* answerPointsSymbol;
+    QwtSymbol* answerSymbol;
+
+    QwtPlotMarker* marker;
 };

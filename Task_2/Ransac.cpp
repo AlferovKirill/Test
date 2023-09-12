@@ -9,6 +9,13 @@ Point::Point(const Point& point) {
     y = point.y;
 }
 
+Point& Point::operator=(const Point& point) {
+    x = point.x;
+    y = point.y;
+
+    return *this;
+}
+
 Point& Point::operator/=(double num) {
     x /= num;
     y /= num;
@@ -24,20 +31,21 @@ double norm(const Point& point) {
     return std::sqrt(point.x * point.x + point.y * point.y);
 }
 
-std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int iterations, double sigma, double k_min, double k_max) {
+std::tuple<double, double, std::vector<Point>> fitLineRansac(const std::vector<Point>& points, int iterations, double sigma, double k_min, double k_max) {
     size_t n = points.size();
 
     if(n == 2) {
         double k = points[0].x / points[0].y;
         double b = points[1].x - k * points[1].y;
 
-        return std::pair<double, double>(k, b);
+        return std::tuple<double, double, std::vector<Point>>(k, b, points);
     }
     else if (n < 2) {
-        return std::pair<double, double>(0, 0);
+        return std::tuple<double, double, std::vector<Point>>(0, 0, points);
     }
 
     std::array<double, 4> line;
+    std::vector<Point> goodPoints;
 
     srand(time(NULL));
 
@@ -54,6 +62,8 @@ std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int it
         const Point& p1 = points[i1];
         const Point& p2 = points[i2];
 
+        std::vector<Point> currentPoints;
+
         Point dp = p2 - p1;
         dp /= norm(dp);
         double score = 0;
@@ -62,20 +72,26 @@ std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int it
             for(size_t i = 0; i < n; ++i) {
                 Point v = points[i] - p1;
                 double d = v.y * dp.x - v.x * dp.y;
-                if(fabs(d) < sigma) ++score;
+
+                if(fabs(d) < sigma) {
+                    ++score;
+                    currentPoints.push_back(points[i]);
+                }
             }
         }
 
         if(score > bestScore) {
             line = { dp.x, dp.y, p1.x, p1.y };
             bestScore = score;
+
+            goodPoints = currentPoints;
         }
     }
 
     double k = line[1] / line[0];
-    double b = line[3] - k*line[2];
+    double b = line[3] - k * line[2];
 
-    return std::pair<double, double>(k, b);
+    return std::tuple<double, double, std::vector<Point>>(k, b, goodPoints);
 }
 
 std::vector<Point> Coordinates::getPoints() {

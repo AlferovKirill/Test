@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <tuple>
 #include <cmath>
 #include <stdlib.h>
 #include <time.h>
@@ -12,6 +13,7 @@ struct Point {
     Point();
     Point(double x, double y);
     Point(const Point& point);
+    Point& operator=(const Point& point);
     Point& operator/=(double num);
 
     Point operator-(const Point& point) const;
@@ -19,7 +21,7 @@ struct Point {
 
 double norm(const Point& point);
 
-std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
+std::tuple<double, double, std::vector<Point>> fitLineRansac(const std::vector<Point>& points, int iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
 
 class Coordinates {
 public:
@@ -31,3 +33,5 @@ public:
 private:
     std::vector<Point> points;
 };
+
+//капибара милая, панда анал, сурок (он спит)
