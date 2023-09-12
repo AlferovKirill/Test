@@ -78,6 +78,10 @@ std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int it
     return std::pair<double, double>(k, b);
 }
 
+std::vector<Point> Coordinates::getPoints() {
+    return points;
+}
+
 void Coordinates::push_back(const Point& point) {
     points.push_back(point);
 }
@@ -88,4 +92,8 @@ void Coordinates::push_back(Point&& point) {
 
 size_t Coordinates::size() const noexcept {
     return points.size();
+}
+
+void Coordinates::clear() {
+    points.clear();
 }

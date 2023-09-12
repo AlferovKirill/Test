@@ -8,7 +8,7 @@ Interface::Interface(QWidget *parent) : QMainWindow(parent), ui(new Ui::Interfac
 
     coordinates = new Coordinates;
 
-    ui->qwtPlot->setCanvasBackground(Qt::lightGray);
+    ui->qwtPlot->setCanvasBackground(Qt::white);
     ui->qwtPlot->setAutoReplot(true);
 
     ui->qwtPlot->setAxisTitle(QwtPlot::yLeft, "y");
@@ -31,13 +31,21 @@ Interface::Interface(QWidget *parent) : QMainWindow(parent), ui(new Ui::Interfac
     picker->setTrackerPen(QColor(Qt::black));
     picker->setStateMachine(new QwtPickerDragPointMachine());
 
+    pointsCurve = new QwtPlotCurve;
+    symbol = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::gray), QPen(Qt::gray, 2), QSize(5, 5));
+
+    pointsCurve->setSymbol(symbol);
+    pointsCurve->setStyle(QwtPlotCurve::NoCurve);
+    pointsCurve->attach(ui->qwtPlot);
+
     connect(ui->openFile, &QAction::triggered, this, &Interface::openDataFile);
     connect(this, &Interface::fileIsNotGood, this, &Interface::fileIsNotCorrect);
 }
 
 bool Interface::readDataFile(const QString& fileName) {
-    QFile file(fileName);
+    clearAll();
 
+    QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return false;
     QTextStream in(&file);
 
@@ -55,11 +63,6 @@ bool Interface::readDataFile(const QString& fileName) {
         double x = coordinate[0].toDouble();
         double y = coordinate[1].toDouble();
 
-        qDebug() << "size x string = " << coordinate[0].size() << ", size y string = " << coordinate[1].size();
-
-        qDebug() << "x string = " << coordinate[0] << ", y string = " << coordinate[1];
-        qDebug() << "x = " << x << ", y = " << y;
-
         if (x == 0 && coordinate[0].size() == 1 && coordinate[0][0] != '0') {
             isFileGood = false;
             continue;
@@ -74,9 +77,14 @@ bool Interface::readDataFile(const QString& fileName) {
     }
 
     qDebug() << "coordinates size = " << coordinates->size();
+    plotUpdate();
 
     file.close();
     return isFileGood;
+}
+
+void Interface::clearAll() {
+    coordinates->clear();
 }
 
 void Interface::openDataFile() {
@@ -89,6 +97,19 @@ void Interface::openDataFile() {
 
 void Interface::fileIsNotCorrect() {
     qDebug() << "File is not good slot";
+}
+
+void Interface::plotUpdate() {
+    QPolygonF newPoints;
+
+    auto newPointsArray = coordinates->getPoints();
+
+    for (size_t i = 0; i < newPointsArray.size(); ++i) {
+        newPoints << QPointF(newPointsArray[i].x, newPointsArray[i].y);
+    }
+
+    pointsCurve->setSamples(newPoints);
+    pointsCurve->attach(ui->qwtPlot);
 }
 
 Interface::~Interface() {

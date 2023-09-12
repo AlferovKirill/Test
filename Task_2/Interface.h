@@ -31,9 +31,11 @@ public:
     ~Interface();
 
     bool readDataFile(const QString& fileName);
+    void clearAll();
 public slots:
     void openDataFile();
     void fileIsNotCorrect();
+    void plotUpdate();
 signals:
     void fileIsNotGood();
 private:
@@ -45,4 +47,6 @@ private:
     QwtPlotMagnifier* magnifier;
     QwtPlotPanner* panner;
     QwtPlotPicker* picker;
+    QwtPlotCurve* pointsCurve;
+    QwtSymbol* symbol;
 };

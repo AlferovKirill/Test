@@ -23,9 +23,11 @@ std::pair<double, double> fitLineRansac(const std::vector<Point>& points, int it
 
 class Coordinates {
 public:
+    std::vector<Point> getPoints();
     void push_back(const Point& point);
     void push_back(Point&& point);
     size_t size() const noexcept;
+    void clear();
 private:
     std::vector<Point> points;
 };
