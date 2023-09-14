@@ -37,6 +37,7 @@ public:
     void clearAll();
 public slots:
     void openDataFile();
+    void saveInDataFile();
     void fileIsNotCorrect();
     void plotUpdate();
     void fitLineRansacSlot();

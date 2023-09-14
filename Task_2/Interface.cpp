@@ -56,8 +56,10 @@ Interface::Interface(QWidget *parent) : QMainWindow(parent), ui(new Ui::Interfac
     answerCurve->attach(ui->qwtPlot);
 
     connect(ui->openFile, &QAction::triggered, this, &Interface::openDataFile);
+    connect(ui->saveInDataFile, &QAction::triggered, this, &Interface::saveInDataFile);
     connect(this, &Interface::fileIsNotGood, this, &Interface::fileIsNotCorrect);
     connect(ui->searchButton, &QPushButton::clicked, this, &Interface::fitLineRansacSlot);
+    connect(ui->clearButton, &QPushButton::clicked, this, &Interface::clearAll);
     connect(picker, SIGNAL(appended(const QPoint&)), this, SLOT(clickOnPlot(const QPoint&)));
 }
 
@@ -140,6 +142,27 @@ void Interface::openDataFile() {
     if (!readDataFile(fileName)) {
         emit fileIsNotGood();
     }
+}
+
+void Interface::saveInDataFile() {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Сохранить в файл"), "", tr("Текстовые файлы (*.txt)"));
+    if(fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+
+        auto points = coordinates->getPoints();
+
+        for (size_t i = 0; i < coordinates->size(); ++i) {
+            out << "(" << QString::number(points[i].x) << ", " << QString::number(points[i].y) << ")\n";
+        }
+
+        file.close();
+    }
+
+    plotUpdate();
 }
 
 void Interface::fileIsNotCorrect() {
