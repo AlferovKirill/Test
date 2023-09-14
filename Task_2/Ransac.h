@@ -33,5 +33,3 @@ public:
 private:
     std::vector<Point> points;
 };
-
-//капибара милая, панда анал, сурок (он спит)
