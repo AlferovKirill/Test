@@ -21,7 +21,6 @@
 #include <qwt/qwt_scale_engine.h>
 #include <qwt/qwt_plot_marker.h>
 
-#include "CustomPlot.h"
 #include "Ransac.h"
 
 QT_BEGIN_NAMESPACE
@@ -41,16 +40,15 @@ public slots:
     void fileIsNotCorrect();
     void plotUpdate();
     void fitLineRansacSlot();
-    void onPlotMousePressEvent();
+private Q_SLOTS:
+    void clickOnPlot(const QPoint& pos);
 signals:
     void fileIsNotGood();
 private:
     Ui::Interface *ui;
 
     Coordinates* coordinates;
-    CustomPlot* qwtPlot;
 
-    QVBoxLayout* vBoxLayout;
     QwtPlotGrid* grid;
     QwtPlotMagnifier* magnifier;
     QwtPlotPanner* panner;

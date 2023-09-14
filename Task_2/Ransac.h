@@ -21,10 +21,9 @@ struct Point {
 
 double norm(const Point& point);
 
-std::tuple<double, double, std::vector<Point>> fitLineRansac(const std::vector<Point>& points, int iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
-
 class Coordinates {
 public:
+    std::tuple<double, double, std::vector<Point>> fitLineRansac(size_t iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
     std::vector<Point> getPoints();
     void push_back(const Point& point);
     void push_back(Point&& point);
