@@ -25,13 +25,13 @@
         <widget class="QPushButton" name="searchButton">
          <property name="minimumSize">
           <size>
-           <width>125</width>
+           <width>150</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>125</width>
+           <width>150</width>
            <height>25</height>
           </size>
          </property>
@@ -44,7 +44,52 @@
         <widget class="QPushButton" name="clearButton">
          <property name="minimumSize">
           <size>
-           <width>125</width>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Очистить</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="timeLabel">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Время (мс):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="equationOutLine">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
            <height>25</height>
           </size>
          </property>
@@ -55,7 +100,10 @@
           </size>
          </property>
          <property name="text">
-          <string>Очистить</string>
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>

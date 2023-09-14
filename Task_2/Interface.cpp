@@ -30,29 +30,36 @@ Interface::Interface(QWidget *parent) : QMainWindow(parent), ui(new Ui::Interfac
     picker->setStateMachine(new QwtPickerDragPointMachine());
 
     pointsCurve = new QwtPlotCurve;
-    answerPointsCurve = new QwtPlotCurve;
+    inlierPointsCurve = new QwtPlotCurve;
+    outlierPointsCurve = new QwtPlotCurve;
     answerCurve = new QwtPlotCurve;
 
     pointsSymbol = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::gray), QPen(Qt::gray, 2), QSize(5, 5));
-    answerPointsSymbol = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::blue), QPen(Qt::blue, 2), QSize(5, 5));
+    inlierPointsSymbol = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::blue), QPen(Qt::blue, 2), QSize(5, 5));
+    outlierPointsSymbol = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::red), QPen(Qt::red, 2), QSize(5, 5));
     answerSymbol = new QwtSymbol;
 
     pointsCurve->setSymbol(pointsSymbol);
-    answerPointsCurve->setSymbol(answerPointsSymbol);
+    inlierPointsCurve->setSymbol(inlierPointsSymbol);
+    outlierPointsCurve->setSymbol(outlierPointsSymbol);
     answerCurve->setSymbol(answerSymbol);
 
     pointsCurve->setStyle(QwtPlotCurve::NoCurve);
     pointsCurve->setLegendAttribute(QwtPlotCurve::LegendShowBrush, true);
 
-    answerPointsCurve->setStyle(QwtPlotCurve::NoCurve);
-    answerPointsCurve->setLegendAttribute(QwtPlotCurve::LegendShowBrush, true);
+    inlierPointsCurve->setStyle(QwtPlotCurve::NoCurve);
+    inlierPointsCurve->setLegendAttribute(QwtPlotCurve::LegendShowBrush, true);
+
+    outlierPointsCurve->setStyle(QwtPlotCurve::NoCurve);
+    outlierPointsCurve->setLegendAttribute(QwtPlotCurve::LegendShowBrush, true);
 
     answerCurve->setPen(Qt::blue, 3);
     answerCurve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     answerCurve->setLegendAttribute(QwtPlotCurve::LegendShowBrush, true);
 
     pointsCurve->attach(ui->qwtPlot);
-    answerPointsCurve->attach(ui->qwtPlot);
+    inlierPointsCurve->attach(ui->qwtPlot);
+    outlierPointsCurve->attach(ui->qwtPlot);
     answerCurve->attach(ui->qwtPlot);
 
     connect(ui->openFile, &QAction::triggered, this, &Interface::openDataFile);
@@ -74,11 +81,11 @@ Interface::~Interface() {
     delete picker;
 
     delete pointsCurve;
-    delete answerPointsCurve;
+    delete inlierPointsCurve;
     delete answerCurve;
 
     delete pointsSymbol;
-    delete answerPointsSymbol;
+    delete inlierPointsSymbol;
     delete answerSymbol;
 }
 
@@ -127,12 +134,13 @@ void Interface::clearAll() {
     coordinates->clear();
 
     pointsCurve->setSamples(0);
-    pointsCurve->attach(ui->qwtPlot);
-
-    answerPointsCurve->setSamples(0);
-    answerPointsCurve->attach(ui->qwtPlot);
-
+    inlierPointsCurve->setSamples(0);
+    outlierPointsCurve->setSamples(0);
     answerCurve->setSamples(0);
+
+    pointsCurve->attach(ui->qwtPlot);
+    inlierPointsCurve->attach(ui->qwtPlot);
+    outlierPointsCurve->attach(ui->qwtPlot);
     answerCurve->attach(ui->qwtPlot);
 }
 
@@ -166,7 +174,8 @@ void Interface::saveInDataFile() {
 }
 
 void Interface::fileIsNotCorrect() {
-    qDebug() << "File is not good slot";
+    QMessageBox::warning(this, "Ошибка", "При открытии файла произошла ошибка. Он не был выбран или его невозможно прочитать");
+    clearAll();
 }
 
 void Interface::plotUpdate() {
@@ -182,25 +191,43 @@ void Interface::plotUpdate() {
 }
 
 void Interface::fitLineRansacSlot(){
-    auto [k, b, suitablePoints] = coordinates->fitLineRansac();
-    double minX = suitablePoints[0].x, maxX = suitablePoints[0].x;
+    try {
+        QElapsedTimer timer;
+        timer.start();
 
-    QPolygonF suitablePointsPolygon, answerCurvePoints;
+        auto [k, b, inlierPoints, outlierPoints] = coordinates->fitLineRansac();
+        double minX = inlierPoints[0].x, maxX = inlierPoints[0].x;
 
-    for (size_t i = 0; i < suitablePoints.size(); ++i) {
-        suitablePointsPolygon << QPointF(suitablePoints[i].x, suitablePoints[i].y);
+        QPolygonF inlierPointsPolygon, outlierPointsPolygon, answerCurvePoints;
 
-        if (suitablePoints[i].x > maxX) maxX = suitablePoints[i].x;
-        if (suitablePoints[i].x < minX) minX = suitablePoints[i].x;
+        for (size_t i = 0; i < inlierPoints.size(); ++i) {
+            inlierPointsPolygon << QPointF(inlierPoints[i].x, inlierPoints[i].y);
+
+            if (inlierPoints[i].x > maxX) maxX = inlierPoints[i].x;
+            if (inlierPoints[i].x < minX) minX = inlierPoints[i].x;
+        }
+
+        for (size_t i = 0; i < outlierPoints.size(); ++i) {
+            outlierPointsPolygon << QPointF(outlierPoints[i].x, outlierPoints[i].y);
+        }
+
+        answerCurvePoints << QPointF(minX, k * minX + b) << QPointF(maxX, maxX * k + b);
+
+        inlierPointsCurve->setSamples(inlierPointsPolygon);
+        outlierPointsCurve->setSamples(outlierPointsPolygon);
+        answerCurve->setSamples(answerCurvePoints);
+
+        inlierPointsCurve->attach(ui->qwtPlot);
+        outlierPointsCurve->attach(ui->qwtPlot);
+        answerCurve->attach(ui->qwtPlot);
+
+        ui->equationOutLine->setText(QString("y = ") + QString::number(k, 'f', 1) + ((b >= 0) ? (QString(" * x + ") + QString::number(b, 'f', 1)) : QString(" * x - ") + QString::number(-b, 'f', 1)));
+        ui->timeLabel->setText(QString("Время (мс): ") + QString::number(timer.elapsed()));
     }
-
-    answerCurvePoints << QPointF(minX, k * minX + b) << QPointF(maxX, maxX * k + b);
-
-    answerPointsCurve->setSamples(suitablePointsPolygon);
-    answerCurve->setSamples(answerCurvePoints);
-
-    answerPointsCurve->attach(ui->qwtPlot);
-    answerCurve->attach(ui->qwtPlot);
+    catch (std::runtime_error& error) {
+        clearAll();
+        plotUpdate();
+    }
 }
 
 void Interface::clickOnPlot(const QPoint& pos) {

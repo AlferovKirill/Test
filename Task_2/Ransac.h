@@ -6,6 +6,7 @@
 #include <cmath>
 #include <stdlib.h>
 #include <time.h>
+#include <stdexcept>
 
 struct Point {
     double x, y;
@@ -15,19 +16,17 @@ struct Point {
     Point(const Point& point);
     Point& operator=(const Point& point);
     Point& operator/=(double num);
-
     Point operator-(const Point& point) const;
 };
 
-double norm(const Point& point);
-
 class Coordinates {
 public:
-    std::tuple<double, double, std::vector<Point>> fitLineRansac(size_t iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
+    std::tuple<double, double, std::vector<Point>, std::vector<Point>> fitLineRansac(size_t iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
     std::vector<Point> getPoints();
+    size_t size() const noexcept;
+    double norm(const Point& point);
     void push_back(const Point& point);
     void push_back(Point&& point);
-    size_t size() const noexcept;
     void clear();
 private:
     std::vector<Point> points;

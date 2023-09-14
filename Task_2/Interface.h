@@ -8,6 +8,8 @@
 #include <QStringList>
 #include <QMouseEvent>
 #include <QFile>
+#include <QMessageBox>
+#include <QElapsedTimer>
 
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_grid.h>
@@ -56,11 +58,13 @@ private:
     QwtPlotPicker* picker;
 
     QwtPlotCurve* pointsCurve;
-    QwtPlotCurve* answerPointsCurve;
+    QwtPlotCurve* inlierPointsCurve;
+    QwtPlotCurve* outlierPointsCurve;
     QwtPlotCurve* answerCurve;
 
     QwtSymbol* pointsSymbol;
-    QwtSymbol* answerPointsSymbol;
+    QwtSymbol* inlierPointsSymbol;
+    QwtSymbol* outlierPointsSymbol;
     QwtSymbol* answerSymbol;
 
     QwtPlotMarker* marker;
