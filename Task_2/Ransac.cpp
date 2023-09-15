@@ -70,6 +70,9 @@ std::tuple<double, double, std::vector<Point>, std::vector<Point>> Coordinates::
         std::vector<Point> currentInlierPoints;
         std::vector<Point> currentOutlierPoints;
 
+        currentInlierPoints.reserve(points.size());
+        currentOutlierPoints.reserve(points.size());
+
         Point dp = p2 - p1;
         dp /= norm(dp);
         double score = 0;
@@ -92,8 +95,8 @@ std::tuple<double, double, std::vector<Point>, std::vector<Point>> Coordinates::
         if(score > bestScore) {
             line = { dp.x, dp.y, p1.x, p1.y };
             bestScore = score;
-            inlierPoints = currentInlierPoints;
-            outlierPoints = currentOutlierPoints;
+            inlierPoints = std::move(currentInlierPoints);
+            outlierPoints = std::move(currentOutlierPoints);
         }
     }
 
@@ -103,6 +106,9 @@ std::tuple<double, double, std::vector<Point>, std::vector<Point>> Coordinates::
     return std::tuple<double, double, std::vector<Point>, std::vector<Point>>(k, b, inlierPoints, outlierPoints);
 }
 
+const Point& Coordinates::operator[](size_t i) {
+    return points[i];
+}
 
 std::vector<Point> Coordinates::getPoints() {
     return points;

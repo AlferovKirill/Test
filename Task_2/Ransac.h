@@ -22,6 +22,7 @@ struct Point {
 class Coordinates {
 public:
     std::tuple<double, double, std::vector<Point>, std::vector<Point>> fitLineRansac(size_t iterations = 1000, double sigma = 1.0, double k_min = -7.0, double k_max = 7.0);
+    const Point& operator[](size_t i);
     std::vector<Point> getPoints();
     size_t size() const noexcept;
     double norm(const Point& point);

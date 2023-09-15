@@ -161,10 +161,8 @@ void Interface::saveInDataFile() {
     {
         QTextStream out(&file);
 
-        auto points = coordinates->getPoints();
-
         for (size_t i = 0; i < coordinates->size(); ++i) {
-            out << "(" << QString::number(points[i].x) << ", " << QString::number(points[i].y) << ")\n";
+            out << "(" << QString::number(coordinates->operator[](i).x) << ", " << QString::number(coordinates->operator[](i).y) << ")\n";
         }
 
         file.close();
@@ -180,10 +178,9 @@ void Interface::fileIsNotCorrect() {
 
 void Interface::plotUpdate() {
     QPolygonF newPoints;
-    auto newPointsArray = coordinates->getPoints();
 
-    for (size_t i = 0; i < newPointsArray.size(); ++i) {
-        newPoints << QPointF(newPointsArray[i].x, newPointsArray[i].y);
+    for (size_t i = 0; i < coordinates->size(); ++i) {
+        newPoints << QPointF(coordinates->operator[](i).x, coordinates->operator[](i).y);
     }
 
     pointsCurve->setSamples(newPoints);
@@ -222,7 +219,7 @@ void Interface::fitLineRansacSlot(){
         answerCurve->attach(ui->qwtPlot);
 
         ui->equationOutLine->setText(QString("y = ") + QString::number(k, 'f', 1) + ((b >= 0) ? (QString(" * x + ") + QString::number(b, 'f', 1)) : QString(" * x - ") + QString::number(-b, 'f', 1)));
-        ui->timeLabel->setText(QString("Время (мс): ") + QString::number(timer.elapsed()));
+        ui->timeLabel->setText(QString("Время : ") + QString::number(timer.elapsed()) + QString(" мс"));
     }
     catch (std::runtime_error& error) {
         clearAll();
